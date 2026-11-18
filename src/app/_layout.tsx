@@ -1,18 +1,33 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { Tabs } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { Text } from 'react-native';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
-
-SplashScreen.preventAutoHideAsync();
+import { CustomCardsProvider } from '@/game/custom-cards';
+import { palette } from '@/game/ui';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <CustomCardsProvider>
+      <StatusBar style="dark" />
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          sceneStyle: { backgroundColor: palette.background },
+          tabBarStyle: { backgroundColor: palette.cream, borderTopColor: palette.border },
+          tabBarActiveTintColor: palette.berry,
+          tabBarInactiveTintColor: palette.muted,
+          tabBarLabelStyle: { fontSize: 12, fontWeight: '700' },
+          tabBarHideOnKeyboard: true,
+        }}>
+        <Tabs.Screen name="index" options={{
+          title: 'Play',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 23 }}>✦</Text>,
+        }} />
+        <Tabs.Screen name="my-cards" options={{
+          title: 'My Cards',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 23 }}>▤</Text>,
+        }} />
+      </Tabs>
+    </CustomCardsProvider>
   );
 }
