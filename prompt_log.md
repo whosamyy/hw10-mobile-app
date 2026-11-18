@@ -83,3 +83,36 @@ Built the Play and My Cards tabs with 40 bilingual prompts, four modes, random d
 - Project-wide `npx expo lint` reported one error in the pre-existing starter hook `src/hooks/use-color-scheme.web.ts`.
 - `npx expo install --check` flagged four existing Expo packages for updates. AsyncStorage 2.2.0 matched SDK 58. npm also reported three moderate audit findings during installation.
 - Physical iPhone testing is pending, including launch, layout and keyboard behavior, and persistence across restarts.
+
+## 2026-11-18 — Next Card state after deletion
+
+- AI tool: Codex
+- Model: to be filled in by user
+
+### Verbatim prompt
+
+````text
+I've finished the independent AI review for my HW10 Tea or Dare app. The original review is saved in REVIEW\.md.
+
+Please read REVIEW\.md and fix this specific issue:
+
+When a custom card is currently displayed on the Play screen and I delete that card from My Cards, the Play screen resets to the welcome prompt, but the Next Card button is still enabled.
+
+Make the button state consistent with the displayed card. If no card is showing, Next Card should be disabled until the user draws another Truth or Dare card.
+
+Please:
+
+- Make the smallest changes necessary.
+- Don't change any of the existing questions or the app's design.
+- Don't modify SPEC.md or REVIEW\.md.
+- Preserve all working functionality, especially custom-card persistence and random drawing.
+- Run TypeScript and other relevant checks afterward.
+- Append this exact prompt verbatim to prompt_log.md, noting that it was used in Codex. Don't invent a model name.
+- Don't commit or push anything.
+
+When finished, explain what you changed and whether the checks passed.
+````
+
+### Result
+
+Next Card now follows the displayed card for both its enabled state and draw type. TypeScript, Play screen lint, and a simulated draw-delete-redraw regression check passed. Project-wide lint still reports the existing starter hook error in `src/hooks/use-color-scheme.web.ts`.

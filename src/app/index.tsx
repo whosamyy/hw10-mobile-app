@@ -79,8 +79,8 @@ export default function PlayScreen() {
       </View>
       <Button
         label="Next Card  →"
-        onPress={() => { if (selection) draw(selection.type); }}
-        disabled={!selection}
+        onPress={() => { if (card) draw(card.type); }}
+        disabled={!card}
         tint={palette.cream}
         ink={palette.berry}
       />
