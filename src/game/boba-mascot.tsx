@@ -4,6 +4,7 @@ import { modes, type Mode } from './cards';
 import { palette } from './ui';
 
 const reactions = {
+  sweet: 'Aww, that’s adorable!',
   chaotic: 'OH??? Spill it 👀',
   spicy: 'Now we’re getting somewhere 🌶️',
   deep: 'Okay, we’re getting deep…',
@@ -58,7 +59,7 @@ export function BobaMascot({ mode, progress, reveal, hasCard, hasPlayer, active,
       </Animated.View>
       <View style={styles.copy}>
         <Text style={styles.action}>{shaking ? 'Shaking…' : 'Shake the Boba!'}</Text>
-        {mode !== 'sweet' && <Text style={styles.reaction}>{reactions[mode]}</Text>}
+        <Text style={styles.reaction}>{reactions[mode]}</Text>
         {!active && <Text style={styles.reaction}>Choose Truth or Dare first.</Text>}
       </View>
     </Pressable>
