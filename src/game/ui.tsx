@@ -65,7 +65,7 @@ export function Button({ label, onPress, selected, disabled, tint, ink }: {
   );
 }
 
-export function ModePicker({ value, onChange }: { value: Mode; onChange: (mode: Mode) => void }) {
+export function ModePicker({ value, onChange, disabled }: { value: Mode; onChange: (mode: Mode) => void; disabled?: boolean }) {
   return (
     <View style={styles.grid}>
       {modeKeys.map((mode) => {
@@ -75,6 +75,7 @@ export function ModePicker({ value, onChange }: { value: Mode; onChange: (mode: 
             <Button
               label={`${emoji}  ${label}`}
               onPress={() => onChange(mode)}
+              disabled={disabled}
               selected={value === mode}
               tint={value === mode ? tint : palette.cream}
               ink={ink}
