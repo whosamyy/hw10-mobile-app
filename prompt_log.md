@@ -301,3 +301,166 @@ Please stop after implementing these three features. Don't add unrelated feature
 - Added a collapsible player panel with name validation, removable tags, and its own AsyncStorage key. Each draw highlights a random player and excludes the previous player when alternatives exist.
 - TypeScript, targeted ESLint, the iOS bundle export, and `git diff --check` passed. A simulated Play and storage check covered restoring and removing players, duplicate and blank names, non-repeating picks, rapid shake taps, Reduce Motion, mode/type filtering, long bilingual card text, and deletion of the active custom card.
 - Project-wide Expo lint still reports the existing error in `src/hooks/use-color-scheme.web.ts`. iPhone animation, on-device storage, and layout checks remain manual.
+
+
+## 2026-11-19 — Mystery Boba and Two-Pearl Trouble
+
+- AI tool: Codex in VS Code
+- Model: to be filled in by user
+
+### Verbatim prompt
+
+````text
+I want to add two more fun features to my existing Tea or Dare mobile app: **Mystery Boba** and **Two-Pearl Trouble**.
+
+The app is already working on my iPhone through Expo Go. I've also added Shake the Boba, Who's Spilling?, and the animated Boba Mascot. I like how everything looks and works right now, so please build on top of the existing implementation rather than rewriting or redesigning it.
+
+Before making changes, inspect the current Play screen, card-drawing logic, player selection, animations, and shared game components so you understand how everything works together.
+
+## 1. Mystery Boba 🎲
+
+I want a surprise mode where players don't know what kind of question they're going to get.
+
+Add a **"Mystery Boba"** button or cute mystery cup somewhere on the Play screen.
+
+When someone taps it:
+- Randomly choose one of the four existing modes: Sweet, Chaotic, Spicy, or Deep Talk.
+- Randomly choose Truth or Dare.
+- Draw a question from that mode and type.
+- Display the selected mode and Truth/Dare type so players know what they got.
+- Use the existing Shake the Boba animation to make the reveal more exciting. The cup could change its accent color to match the randomly selected mode.
+- Show a fun little message such as "Let's see what the boba gods decided..." during the reveal.
+- Keep the existing Boba Mascot and its expressions working. The mascot should react to the randomly selected mode.
+- If players have been added through Who's Spilling?, randomly select someone to answer, using the existing player-selection rules.
+
+Mystery Boba should work even if the user hasn't manually selected Truth or Dare yet.
+
+Important:
+- Reuse the existing card-drawing logic instead of creating a separate question system.
+- Avoid immediately repeating the same card when other matching cards are available.
+- Prevent rapid taps from triggering overlapping draws or animations.
+- Respect the user's Reduce Motion setting.
+- Make sure changing modes or tapping other controls during the animation doesn't leave the app in an inconsistent state.
+- Mystery Boba should not permanently change or break the normal Truth/Dare gameplay. After revealing a mystery card, the user should still be able to use the regular mode and type controls.
+
+For now, don't add another screen. Keep this feature on Play.
+
+## 2. Two-Pearl Trouble 💞
+
+I want a special round where **two players are picked together** instead of just one.
+
+Add a **"Two-Pearl Trouble"** button on the Play screen.
+
+When someone taps it:
+- Randomly select two different players from the existing Who's Spilling? roster.
+- Show both names prominently, with a cute message such as "[Name] + [Name], you're in trouble together! 💞"
+- Give the pair a fun, creative challenge to do together.
+- Make the challenge appear on a special card with English and Chinese displayed together.
+- Use a slightly different design for duo challenges, like two little boba cups, linked hearts, or matching pearls.
+- Give the mascot a fun reaction when a duo challenge is revealed.
+- Add a small reveal animation if it fits naturally with the existing app.
+
+I want **12 built-in bilingual duo challenges**. Please make them creative, funny, and suitable for college friends hanging out together.
+
+Some examples of the vibe I'm imagining:
+- Make up a ridiculous story about how you two first met.
+- Describe each other's dating types in three words.
+- Act out a dramatic breakup scene together.
+- Give each other fake awards and explain why.
+- Pretend you're competing for the same role in a reality dating show.
+- Make a 20-second commercial convincing everyone that your friendship is a luxury product.
+
+Please come up with additional challenges that are actually funny, not just generic icebreakers. The Chinese versions should sound natural and conversational.
+
+Player rules:
+- Two-Pearl Trouble should require at least two players.
+- If there are fewer than two players, show a friendly message asking users to add more people instead of crashing or selecting someone twice.
+- Never select the same person for both spots.
+- Avoid picking the exact same pair in consecutive duo rounds when other pairs are available.
+- If there are only two players, it's fine to select the same pair again.
+- If the roster changes, handle removed players gracefully.
+- Players should be able to keep drawing new duo challenges without restarting the game.
+
+Please also avoid immediately repeating the same duo challenge when alternatives are available.
+
+I don't need online multiplayer, accounts, scoring, or anything complicated. Everyone is still playing together on one phone.
+
+## 3. How these features should fit into the existing app
+
+I don't want the Play screen to become overcrowded.
+
+Please organize the new features in a way that feels intentional.
+
+Some ideas:
+- Add a compact section called "Special Rounds."
+- Give Mystery Boba and Two-Pearl Trouble their own cute buttons.
+- Use small icons and slightly different accent colors.
+- Keep the main Truth/Dare buttons easy to find.
+- Keep Who's Spilling? collapsible so the player list doesn't take over the screen.
+- Make sure the card area can display normal cards, mystery cards, and duo challenges without awkward layout changes.
+
+The original pastel pink, cream, and strawberry-red bubble tea aesthetic should stay consistent.
+
+I want the result to feel like a cute, polished party game rather than a screen full of random buttons.
+
+Please keep all animations short and smooth. Respect iOS Reduce Motion settings throughout.
+
+## 4. Preserve everything that's already working
+
+Do not remove or break:
+
+- The two existing screens: Play and My Cards.
+- Sweet, Chaotic, Spicy, and Deep Talk modes.
+- The original 40 bilingual Truth or Dare cards.
+- Truth/Dare selection and Next Card functionality.
+- Immediate-repeat prevention.
+- Custom bilingual card creation and deletion.
+- AsyncStorage persistence for custom cards.
+- Shake the Boba animations.
+- Who's Spilling? player management and locally saved names.
+- Random player assignment without immediate repeats.
+- The animated Boba Mascot and its different expressions.
+- The fix that disables Next Card when the displayed custom card is deleted.
+- Existing navigation, styling, and accessibility behavior.
+
+Do not overwrite the user's current custom cards or saved player roster.
+
+Do not change `SPEC.md` or `REVIEW.md`. They document the original HW10 assignment and independent review.
+
+Please make focused changes, reuse existing components and helpers where possible, and avoid unnecessary dependencies.
+
+## 5. Prompt log
+
+Update the existing `prompt_log.md` in the project root.
+
+- Append this **entire prompt verbatim**, exactly as received, including all sections.
+- Do not shorten, summarize, or paraphrase the original prompt.
+- Record the tool as Codex in VS Code.
+- Record the exact model name if available. If it isn't available, use a placeholder rather than guessing.
+- Add a brief summary of the actual changes made and checks performed.
+- Keep all existing prompt-log entries intact.
+- Do not modify `SPEC.md` or `REVIEW.md`.
+
+## 6. Testing
+
+After implementation, please:
+
+1. Run TypeScript checking.
+2. Run targeted ESLint checks on the files you changed.
+3. Check that Mystery Boba can select every mode and both Truth/Dare types.
+4. Verify that Mystery Boba uses the correct question deck and player-selection logic.
+5. Check that rapid taps cannot trigger overlapping draws.
+6. Verify that Two-Pearl Trouble never assigns the same player twice in one round.
+7. Test pair selection with 0, 1, 2, and 3 or more players.
+8. Verify that duo challenges and pairs don't immediately repeat when alternatives exist.
+9. Check that changes to the player roster don't cause stale selections or
+````
+
+The supplied attachment ends mid-sentence at testing item 9. The block contains every byte of the attached prompt.
+
+### Implementation and checks
+
+- Added Mystery Boba to the Play screen. It uses the existing shake, mode/type deck, and solo player assignment.
+- Added Two-Pearl Trouble with 12 bilingual challenges, a shared-card presentation, roster-aware pair selection, and repeat prevention for pairs and challenges.
+- TypeScript, targeted ESLint, iOS bundle export, and a simulated round check passed. The simulation covered all eight mystery categories, custom-card eligibility and deletion, overlapping tap prevention, Reduce Motion, 0–4 players, pair and challenge repeats, and roster changes.
+- Project-wide Expo lint still reports the existing starter-hook error in `src/hooks/use-color-scheme.web.ts`. Physical iPhone layout and animation remain unverified.

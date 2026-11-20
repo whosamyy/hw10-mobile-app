@@ -59,7 +59,7 @@ export function usePlayers() {
 
 export function PlayerPanel({ roster, selected, onRemoved }: {
   roster: ReturnType<typeof usePlayers>;
-  selected?: string;
+  selected?: readonly string[];
   onRemoved: (name: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -108,9 +108,9 @@ export function PlayerPanel({ roster, selected, onRemoved }: {
           <View style={shared.row}>
             {names.map((name) => (
               <Pressable key={name} accessibilityRole="button" accessibilityLabel={`Remove ${name}`}
-                accessibilityState={{ disabled: unavailable, selected: name === selected }}
+                accessibilityState={{ disabled: unavailable, selected: selected?.includes(name) }}
                 disabled={unavailable} onPress={() => void remove(name)}
-                style={[styles.tag, name === selected && styles.selected]}>
+                style={[styles.tag, selected?.includes(name) && styles.selected]}>
                 <Text style={styles.tagText}>{name}  ×</Text>
               </Pressable>
             ))}

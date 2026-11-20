@@ -15,12 +15,14 @@ const pearls = [
   { left: 11, bottom: 15 }, { left: 36, bottom: 15 },
 ];
 
-export function BobaMascot({ mode, progress, reveal, hasCard, hasPlayer, active, shaking, onShake }: {
+export function BobaMascot({ mode, progress, reveal, hasCard, hasPlayer, duo, mysteryPending, active, shaking, onShake }: {
   mode: Mode;
   progress: Animated.Value;
   reveal: Animated.Value;
   hasCard: boolean;
   hasPlayer: boolean;
+  duo: boolean;
+  mysteryPending: boolean;
   active: boolean;
   shaking: boolean;
   onShake: () => void;
@@ -55,11 +57,11 @@ export function BobaMascot({ mode, progress, reveal, hasCard, hasPlayer, active,
           ))}
         </View>
         <View style={styles.lid} />
-        {hasCard && <Animated.Text style={[styles.sparkle, { opacity: reveal }]}>{hasPlayer ? '♥' : '✦'}</Animated.Text>}
+        {hasCard && <Animated.Text style={[styles.sparkle, { opacity: reveal }]}>{duo ? '♥♥' : hasPlayer ? '♥' : '✦'}</Animated.Text>}
       </Animated.View>
       <View style={styles.copy}>
         <Text style={styles.action}>{shaking ? 'Shaking…' : 'Shake the Boba!'}</Text>
-        <Text style={styles.reaction}>{reactions[mode]}</Text>
+        <Text style={styles.reaction}>{mysteryPending ? 'Mystery Boba incoming…' : duo ? 'Double the pearls, double the trouble!' : reactions[mode]}</Text>
         {!active && <Text style={styles.reaction}>Choose Truth or Dare first.</Text>}
       </View>
     </Pressable>

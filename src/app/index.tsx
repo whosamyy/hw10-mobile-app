@@ -5,26 +5,46 @@ import { BobaMascot } from '@/game/boba-mascot';
 import { builtInCards, drawCard, modes, typeKeys, types, type CardType, type Mode } from '@/game/cards';
 import { useCustomCards } from '@/game/custom-cards';
 import { pickPlayer, PlayerPanel, usePlayers } from '@/game/players';
+import { drawDuoChallenge, duoChallenges, mysteryCategory, pickPair, type PlayerPair } from '@/game/special-rounds';
 import { Button, Heading, ModePicker, Page, palette, shared } from '@/game/ui';
+
+type Selection =
+  | { kind: 'solo'; id: string; player?: string; mystery: boolean }
+  | { kind: 'duo'; index: number; pair: PlayerPair };
+type DrawRequest =
+  | { kind: 'solo'; type: CardType }
+  | { kind: 'mystery' }
+  | { kind: 'duo' };
+
+const duoFlavor = { tint: '#F5DCEB', ink: '#81305E' };
 
 export default function PlayScreen() {
   const [mode, setMode] = useState<Mode>('sweet');
-  const [selection, setSelection] = useState<{ id: string; player?: string }>();
+  const [selection, setSelection] = useState<Selection>();
   const [activeType, setActiveType] = useState<CardType>();
-  const [shaking, setShaking] = useState(false);
+  const [pending, setPending] = useState<DrawRequest>();
+  const [duoMessage, setDuoMessage] = useState('');
+  const shaking = Boolean(pending);
   const shakeInProgress = useRef(false);
-  const latestDraw = useRef<(type: CardType) => void>(() => {});
+  const latestDraw = useRef<(request: DrawRequest) => void>(() => {});
   const previousId = useRef<string | undefined>(undefined);
   const previousPlayer = useRef<string | undefined>(undefined);
+  const previousPair = useRef<PlayerPair | undefined>(undefined);
+  const previousChallenge = useRef<number | undefined>(undefined);
   const [opacity] = useState(() => new Animated.Value(1));
   const [shakeProgress] = useState(() => new Animated.Value(0));
   const reduceMotion = useRef(true);
   const { cards } = useCustomCards();
   const roster = usePlayers();
   const deck = [...builtInCards, ...cards];
-  const card = selection && deck.find((entry) => entry.id === selection.id);
-  const player = card && roster.names.find((name) => name === selection?.player);
+  const solo = selection?.kind === 'solo' ? selection : undefined;
+  const card = solo && deck.find((entry) => entry.id === solo.id);
+  const player = card && roster.names.find((name) => name === solo.player);
+  const duo = selection?.kind === 'duo' && selection.pair.every((name) => roster.names.includes(name))
+    ? selection : undefined;
+  const question = duo ? duoChallenges[duo.index] : card;
   const flavor = modes[mode];
+  const cardFlavor = duo ? duoFlavor : flavor;
 
   useEffect(() => {
     let active = true;
@@ -52,17 +72,34 @@ export default function PlayScreen() {
     opacity.setValue(1);
     setMode(next);
     setSelection(undefined);
+    setDuoMessage('');
   }
 
-  function draw(type: CardType) {
+  function draw(request: DrawRequest) {
     if (shakeInProgress.current) return;
-    const next = drawCard(deck, mode, type, previousId.current);
-    if (!next) return;
-    const player = pickPlayer(roster.names, previousPlayer.current);
-    previousId.current = next.id;
-    previousPlayer.current = player;
-    setActiveType(type);
-    setSelection({ id: next.id, player });
+    if (request.kind === 'duo') {
+      const pair = pickPair(roster.names, previousPair.current);
+      if (!pair) {
+        setDuoMessage('Add at least two players in Who’s Spilling? to start a duo round.');
+        return;
+      }
+      const index = drawDuoChallenge(previousChallenge.current);
+      previousPair.current = pair;
+      previousChallenge.current = index;
+      setSelection({ kind: 'duo', pair, index });
+    } else {
+      const mystery = request.kind === 'mystery';
+      const category = mystery ? mysteryCategory() : { mode, type: request.type };
+      const next = drawCard(deck, category.mode, category.type, previousId.current);
+      if (!next) return;
+      const player = pickPlayer(roster.names, previousPlayer.current);
+      previousId.current = next.id;
+      previousPlayer.current = player;
+      setMode(category.mode);
+      setActiveType(category.type);
+      setSelection({ kind: 'solo', id: next.id, player, mystery });
+    }
+    setDuoMessage('');
     if (reduceMotion.current) {
       opacity.setValue(1);
       return;
@@ -77,14 +114,15 @@ export default function PlayScreen() {
     latestDraw.current = draw;
   });
 
-  function shake() {
-    if (!activeType || shakeInProgress.current) return;
+  function shake(request: DrawRequest) {
+    if (shakeInProgress.current) return;
+    setDuoMessage('');
     if (reduceMotion.current) {
-      draw(activeType);
+      draw(request);
       return;
     }
     shakeInProgress.current = true;
-    setShaking(true);
+    setPending(request);
     shakeProgress.setValue(0);
     Animated.timing(shakeProgress, {
       toValue: 1, duration: 360, useNativeDriver: Platform.OS !== 'web',
@@ -92,8 +130,16 @@ export default function PlayScreen() {
       if (!shakeInProgress.current) return;
       shakeInProgress.current = false;
       shakeProgress.setValue(0);
-      setShaking(false);
-      if (finished || reduceMotion.current) latestDraw.current(activeType);
+      setPending(undefined);
+      if (finished || reduceMotion.current) latestDraw.current(request);
+    });
+  }
+
+  function removePlayer(name: string) {
+    setSelection((current) => {
+      if (current?.kind === 'duo' && current.pair.includes(name)) return undefined;
+      if (current?.kind === 'solo' && current.player === name) return { ...current, player: undefined };
+      return current;
     });
   }
 
@@ -104,14 +150,14 @@ export default function PlayScreen() {
         <Text style={shared.label}>Pick a mode</Text>
         <ModePicker value={mode} onChange={selectMode} disabled={shaking} />
       </View>
-      <PlayerPanel roster={roster} selected={player} onRemoved={(name) => {
-        setSelection((current) => current?.player === name ? { id: current.id } : current);
-      }} />
-      <BobaMascot mode={mode} progress={shakeProgress} reveal={opacity} hasCard={Boolean(card)}
-        hasPlayer={Boolean(player)} active={Boolean(activeType)} shaking={shaking} onShake={shake} />
-      <Animated.View style={[shared.panel, styles.card, { opacity, borderColor: flavor.ink }]}>
-        <Text style={[styles.tag, { backgroundColor: flavor.tint, color: flavor.ink }]}>
-          {flavor.emoji}  {flavor.label}{card ? ` · ${types[card.type]}` : ''}
+      <PlayerPanel roster={roster} selected={duo?.pair ?? (player ? [player] : [])} onRemoved={removePlayer} />
+      <BobaMascot mode={mode} progress={shakeProgress} reveal={opacity} hasCard={Boolean(question)}
+        hasPlayer={Boolean(player || duo)} duo={Boolean(duo)} mysteryPending={pending?.kind === 'mystery'}
+        active={Boolean(activeType)} shaking={shaking}
+        onShake={() => { if (activeType) shake({ kind: 'solo', type: activeType }); }} />
+      <Animated.View style={[shared.panel, styles.card, { opacity, borderColor: cardFlavor.ink }]}>
+        <Text style={[styles.tag, { backgroundColor: cardFlavor.tint, color: cardFlavor.ink }]}>
+          {duo ? '💞  Two-Pearl Trouble' : `${card && solo?.mystery ? '🎲  ' : ''}${flavor.emoji}  ${flavor.label}${card ? ` · ${types[card.type]}` : ''}`}
         </Text>
         <View accessibilityLiveRegion="polite" style={styles.cardCopy}>
           {player && (
@@ -119,27 +165,52 @@ export default function PlayScreen() {
               You’re spilling the tea this round, {player}! 👀
             </Text>
           )}
-          <Text style={styles.english}>{card?.en ?? 'Ready to spill some tea?'}</Text>
-          <View style={[styles.rule, { backgroundColor: flavor.tint }]} />
-          <Text style={styles.chinese}>{card?.zh ?? '准备好分享你的小秘密了吗？'}</Text>
+          {duo && (
+            <Text style={[styles.spotlight, { backgroundColor: duoFlavor.tint, color: duoFlavor.ink }]}>
+              {duo.pair.join(' + ')}, you’re in trouble together! 💞
+            </Text>
+          )}
+          <Text style={styles.english}>{question?.en ?? 'Ready to spill some tea?'}</Text>
+          <View style={[styles.rule, { backgroundColor: cardFlavor.tint }]} />
+          <Text style={styles.chinese}>{question?.zh ?? '准备好分享你的小秘密了吗？'}</Text>
         </View>
       </Animated.View>
       <View style={shared.row}>
         {typeKeys.map((type) => (
           <View key={type} style={shared.column}>
-            <Button label={types[type]} onPress={() => draw(type)} selected={activeType === type} disabled={shaking}
+            <Button label={types[type]} onPress={() => draw({ kind: 'solo', type })} selected={activeType === type} disabled={shaking}
               tint={activeType === type ? flavor.tint : undefined}
               ink={activeType === type ? flavor.ink : undefined} />
           </View>
         ))}
       </View>
       <Button
-        label="Next Card  →"
-        onPress={() => { if (card) draw(card.type); }}
-        disabled={!card || shaking}
+        label={duo ? 'Next Duo Challenge  →' : 'Next Card  →'}
+        onPress={() => {
+          if (duo) draw({ kind: 'duo' });
+          else if (card) draw({ kind: 'solo', type: card.type });
+        }}
+        disabled={!question || shaking}
         tint={palette.cream}
         ink={palette.berry}
       />
+      <View style={styles.picker}>
+        <Text style={shared.label}>Special Rounds</Text>
+        <View style={shared.row}>
+          <View style={shared.column}>
+            <Button label="🎲  Mystery Boba" onPress={() => shake({ kind: 'mystery' })} disabled={shaking}
+              tint={modes.deep.tint} ink={modes.deep.ink} />
+          </View>
+          <View style={shared.column}>
+            <Button label="💞  Two-Pearl Trouble" onPress={() => draw({ kind: 'duo' })}
+              disabled={shaking || roster.loading} tint={duoFlavor.tint} ink={duoFlavor.ink} />
+          </View>
+        </View>
+        {pending?.kind === 'mystery' && (
+          <Text accessibilityLiveRegion="polite" style={shared.body}>Let’s see what the boba gods decided…</Text>
+        )}
+        {!!duoMessage && <Text accessibilityLiveRegion="polite" style={shared.body}>{duoMessage}</Text>}
+      </View>
     </Page>
   );
 }
