@@ -1,56 +1,81 @@
-# Welcome to your Expo app 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# Tea or Dare 🧋
 
-## Get started
+A bilingual Truth or Dare mobile game made with React Native and Expo.
 
-1. Install dependencies
+## About
+
+I wanted to make a Truth or Dare game that I could actually play with my friends because a lot of the ones online have pretty boring questions, so I wanted something with more personality. Tea or Dare has a mix of funny, embarrassing, flirty, and deeper questions, all in English and Chinese so we don't have to keep translating while playing.
+
+## Screens
+
+### Play
+
+This is where the actual game happens. You can choose from four modes: Sweet, Chaotic, Spicy, and Deep Talk. Each one has its own set of Truth and Dare questions, with both English and Chinese shown on the card.
+
+There's also an animated boba mascot that reacts to different modes. You can tap the cup to shake it and draw another card. I added a Who's Spilling? feature too, where everyone can enter their names and the app randomly picks who's answering each round.
+
+There are also two special game modes. Mystery Boba randomly picks both the category and Truth or Dare, so you never know what you're going to get. Two-Pearl Trouble randomly chooses two players and gives them a challenge to complete together. I thought these would make the game a little more unpredictable and fun when playing with a group of friends.
+
+### My Cards
+
+This screen is for adding your own questions. You can enter English and Chinese text, choose a mode and Truth/Dare type, and save the card.
+
+Custom questions get mixed into the regular decks, and you can delete them whenever you want. They stay saved even after closing the app.
+
+## How to Run
+
+I built the app using:
+- React Native
+- Expo SDK 58
+- Expo Router
+- AsyncStorage
+
+I used Node.js v24.13.1 during development and tested the app on my iPhone using Expo Go.
+
+### Setup
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/whosamyy/hw10-mobile-app.git
+   cd hw10-mobile-app
+   ```
+
+2. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+3. Install Expo Go on your phone and sign in to your Expo account.
+
+4. Sign in with the same Expo account in your terminal:
+
+   ```bash
+   npx expo login
+   ```
+
+5. Start the app:
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+6. Make sure your computer and phone are connected to the same Wi-Fi network. Scan the QR code with your phone's camera and open the app in Expo Go.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+If the connection doesn't work, try:
 
 ```bash
-npm run reset-project
+npx expo start --tunnel
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+The app doesn't need a backend, API key, or paid developer account. The questions are stored locally, and AsyncStorage saves custom cards and player names.
 
-### Other setup steps
+## What I Learned
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+One thing I thought was pretty cool was how I could make changes in VS Code and see them show up on my phone almost immediately through Expo Go. I also learned how AsyncStorage works and how to use it to keep custom questions and player names saved even after closing the app. This was my first time working with React Native, so it was interesting to see how building a mobile app differs from building a regular website.
 
-## Learn more
+## AI Usage
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+I used Codex in VS Code to help build the app, understand React Native, review the implementation, and fix issues.

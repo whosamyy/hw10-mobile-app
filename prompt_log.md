@@ -3,7 +3,24 @@
 - Date: to be filled in by user (before the implementation prompt)
 - AI tool: Codex in VS Code
 - Model: to be filled in by user
-- Exact prompt: [To be filled in by user. The original prompt was unavailable in this conversation.]
+
+### Verbatim prompt
+
+````text
+I'm working on CMU 15-114 HW10 using React Native and Expo SDK 58.
+
+Here's the instructions: https://www.cs.cmu.edu/~113/hw10.html
+
+I'm new to React Native. Please examine my existing Expo starter project and explain:
+1. What the main files and folders do.
+2. What index.tsx and _layout.tsx are responsible for.
+3. How navigation between the Home and Explore screens works.
+4. How React Native components like View and Text differ from HTML.
+5. How useState works, with a simple example.
+Please use examples from my actual project and explain things in beginner-friendly terms.
+
+Do not modify any files yet.
+````
 
 ## 2026-11-18 — Initial Tea or Dare implementation
 
@@ -83,6 +100,54 @@ Built the Play and My Cards tabs with 40 bilingual prompts, four modes, random d
 - Project-wide `npx expo lint` reported one error in the pre-existing starter hook `src/hooks/use-color-scheme.web.ts`.
 - `npx expo install --check` flagged four existing Expo packages for updates. AsyncStorage 2.2.0 matched SDK 58. npm also reported three moderate audit findings during installation.
 - Physical iPhone testing is pending, including launch, layout and keyboard behavior, and persistence across restarts.
+
+## 2026-11-18 — Independent Tea or Dare review
+
+- AI tool: Codex in VS Code
+- Model: to be filled in by user
+
+### Verbatim prompt
+
+````text
+I'm working on CMU 15-114 HW10. I finished the initial implementation of my Tea or Dare mobile app, and I want an independent code review before making any fixes.
+
+This project uses React Native, Expo SDK 58, and Expo Router. The app runs on my iPhone through Expo Go.
+
+Please read SPEC.md carefully and review the actual implementation against it.
+
+For each of the 26 numbered acceptance criteria in SPEC.md:
+- Mark it [PASS], [FAIL], or [WARN].
+- Explain briefly why you gave that result.
+- Reference the relevant files and line numbers.
+- Don't assume something works just because the implementation looks correct.
+- Clearly distinguish what you can verify from code inspection versus what would require testing on a physical phone.
+Also check for:
+1. Bugs or logic errors, especially random card selection and preventing immediate repeats.
+2. AsyncStorage issues, including saving, loading, deleting, and persistence after restarting.
+3. Missing input validation and error handling.
+4. Navigation issues between Play and My Cards.
+5. Any problems with longer English or Chinese text.
+6. React Native and Expo SDK 58 compatibility.
+7. Code quality issues, unnecessary complexity, or repeated code.
+8. Accessibility and basic usability concerns.
+I already tested the app manually on my iPhone, and the main features appeared to work.
+
+Create REVIEW.md in the project root with:
+- A short overall assessment.
+- A checklist covering all 26 acceptance criteria.
+- Additional findings, if any.
+- A prioritized list of issues worth fixing.
+- A short conclusion.
+IMPORTANT:
+- This is an independent review, not an implementation task.
+- Do not fix anything yet.
+- Do not change any application code, tests, dependencies, or SPEC.md.
+- Do not modify prompt_log.md in this session; I will record this prompt afterward.
+- Only create REVIEW.md.
+- Do not commit or push anything.
+- Be critical and specific, even if most things look correct.
+When finished, summarize your findings and tell me where REVIEW.md was saved.
+````
 
 ## 2026-11-18 — Next Card state after deletion
 
